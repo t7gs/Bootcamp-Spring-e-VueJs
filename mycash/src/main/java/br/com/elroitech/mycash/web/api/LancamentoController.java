@@ -2,7 +2,7 @@ package br.com.elroitech.mycash.web.api;
 
 import java.util.List;
 
-import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,56 +15,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.elroitech.mycash.domain.Lancamento;
-import br.com.elroitech.mycash.repository.LancamentoRepository;
+import br.com.elroitech.mycash.service.LancamentoService;
 
 @RestController
 @RequestMapping("/api/lancamento")
 public class LancamentoController {
 
 	@Autowired
-	LancamentoRepository repo;
+	private LancamentoService service;
 
 	@GetMapping
 	public List<Lancamento> todos() {
 
-		return repo.findAll();
-//		return Collections.EMPTY_LIST;
+		return service.todos();
 	}
 
 	@GetMapping("/{id}")
 	public Lancamento apenasUm(@PathVariable("id") Integer Id) {
-		return repo.findById(Id).orElseThrow(() -> new EntityNotFoundException());
+		return service.apenasUm(Id);
 
 	}
 	
 	@PostMapping
-	public Lancamento criar(@RequestBody Lancamento lancamento) {
-		return repo.save(lancamento);
+	public Lancamento criar(@Valid @RequestBody Lancamento lancamento) {
+		return service.criar(lancamento);
 	}
 	
 	@PutMapping("/{id}")
 	public Lancamento atualizar(@PathVariable Integer id, @RequestBody Lancamento novoLancamento) {
 		
-		return repo.findById(id).map(lancamento ->{
-			lancamento.setDescricao(novoLancamento.getDescricao());
-			lancamento.setValor(novoLancamento.getValor());
-			lancamento.setTipo(novoLancamento.getTipo());
-			lancamento.setData(novoLancamento.getData());
-			
-			return repo.save(lancamento);
-		})
-		.orElseThrow(() -> new EntityNotFoundException());
+		return service.atualizar(id, novoLancamento);
 	}
 	
 	
 	@DeleteMapping("/{id}")
 	public void excluir(@PathVariable Integer id) {
-//		repo.findById(id).map(lancamento ->{
-//			lancamento.setExcluido(true);
-//			return repo.save(lancamento);
-//		})
-//		.orElseThrow()-> new EntityNotFoundException());
-		repo.deleteById(id);
+		service.excluir(id);
 	}
 
 }

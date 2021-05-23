@@ -9,6 +9,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 
 @Entity
@@ -19,17 +26,22 @@ public class Lancamento {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	
-	
+	@NotBlank(message = "Campo descrição é obrigatório")
+	@Size(max = 50)
 	private String descricao;
 	
+	
 	@Column(name = "vl_lancamento", precision = 8, scale = 2)
+	@Min(value = 0, message = "O Campo deve ser maior que zero")
 	private Double valor;
 	
-	
+//	@FutureOrPresent
+	@NotNull(message = "campo data é obrigatório") //para todos os campos e @Notblank para string
 	private LocalDate data;
 	
 	@Enumerated(EnumType.STRING)
 	//@Column(nullable = false)
+	@NotNull(message = "campo tipo é obrigatório")
 	private LancamentoTipo tipo;
 
 	
